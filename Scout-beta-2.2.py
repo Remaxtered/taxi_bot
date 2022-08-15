@@ -10,11 +10,13 @@ from datetime import date
 import traceback
 
 class App():
+
+
 	def __init__(self, lgn, psw):
 		self.s_ops()
 		self.drvr = webdriver.Chrome('chromedriver.exe', options=self.chrmops)
-		self.tkn = '1924294058:AAFl2dUYMQmQLG1-FZ1w2SMCmI2uTBDW2PQ'
-		self.rs_tkn = '1933431693:AAH-X3Dni_8vMaY4BBcpQf6NH9PD76aDLKs'
+		self.tkn = 'SOME_API_TOKEN'
+		self.rs_tkn = 'ANOTHER_API_TOKEN'
 		self.bt = telebot.TeleBot(self.tkn, threaded=False)
 		self.rs_bt = telebot.TeleBot(self.rs_tkn, threaded=False)
 		try:
@@ -23,16 +25,20 @@ class App():
 			self.tkn = self.rs_tkn
 			self.bt = self.rs_bt
 			self.bt.get_updates(allowed_updates=["channel_post"])
-		self.ctid = '-1001597515035'
-		self.e_ch = "-1001523162152"
+		self.ctid = '-SOME_CHAT_ID'
+		self.e_ch = "-ANOTHER_CHAT_ID"
 		self.rlg_in = 1800
 		self._lgn = lgn
 		self._ps = psw
 		self.t = date.today()
+
+
 	def s_ops(self):
 		self.chrmops = webdriver.ChromeOptions()
 		self.chrmops.add_experimental_option("useAutomationExtension", False)
 		self.chrmops.add_experimental_option("excludeSwitches", ["enable-automation"])
+
+
 	def lg(self):
 		for i in range(5):
 			try:
@@ -54,11 +60,15 @@ class App():
 		print("Ошибка во время процесса авторизации на сайте!\nПроверьте подключение к интернету!")
 		self.bt.send_message(self.e_ch, 'Бот не смог авторизоваться на сайте!')
 		self.upch()
+
+
 	def upch(self):
 	    self.q = requests.get(f'https://api.telegram.org/bot{self.tkn}/getUpdates').json()
 	    if (self.q['result'] != [] ):
 	        self.fst = str(self.q['result'][-1]['update_id']+1)
 	        requests.get(f'https://api.telegram.org/bot{self.tkn}/getUpdates?offset={self.fst}')
+
+
 	def w(self):
 		@self.bt.channel_post_handler()
 		def get_user_data(x):
@@ -67,6 +77,8 @@ class App():
 				self.lg()
 			self.prsm(x.text)
 			time.sleep(10)
+
+
 	def prsm(self, msg):
 		if (msg.startswith('{')):
 			data = json.loads(msg)
@@ -95,6 +107,8 @@ class App():
 				}
 				self.rgs(self.rdta)
 			return
+
+
 	def vt(self, data):
 		self.drvr.get("https://scouts-n-agents.taxi.yandex.net")
 		if (data["phone_number"] != "" and data["license"] == ""):
@@ -150,6 +164,8 @@ class App():
 		self.bt.send_message(self.ctid, '{"validate_status": { "status":"OK"} }')
 		self.bt.send_message(self.e_ch, f"Ошибка во время проверки на лида пользователя с номером телефона: {self.phone}")
 		return
+
+
 	def rgs(self, data):
 		self.brnd = data["brand"]
 		self.mdl = data["model"]
@@ -204,6 +220,7 @@ class App():
 			print(f"Ошибка во время регистрации {self.name}!")
 			self.bt.send_message(self.e_ch, f"Ошибка во время регистрации!\nДанные для регистрации {data}\n\nТекст ошибки:\n{traceback.format_exc()}")
 			return
+
 
 	def sltvl(self, p, v):
 		self.drvr.execute_script(
